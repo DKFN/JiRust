@@ -10,7 +10,6 @@ fn main() {
     // Script variables
     let mut jira_host = String::new();
     let mut jira_mail = String::new();
-    let mut jira_pass = String::new();
     let mut jira_project = String::new();
 
     println!("Welcome to JiRust (unstable) made by Bataillion APPING");
@@ -29,7 +28,10 @@ fn main() {
 
     println!("Please enter your Jira password");
 
-    io::stdin().read_line(&mut jira_pass).expect("Unable to read line");
+    let jira_pass = rpassword::prompt_password_stdout("->")
+        .expect("Unable to catch the password");
+
+    // io::stdin().read_line(&mut jira_pass).expect("Unable to read line");
 
     println!("Please enter the identifier of the project you wish to import (UPPERCASE)");
 
@@ -45,12 +47,13 @@ fn jira_get_issues(jira_host: String,
                    jira_pass: String,
                    jira_project: String)
 {
-    let fin = format!("{}{}{}", jira_host, "rest/api/2/search?jql=project=", jira_project);
     let mut host = jira_host.to_owned();
     let mut pass = jira_pass.to_owned();
 
-    pass.pop();
+    // pass.pop();
     host.pop();
+
+    let fin = format!("{}{}{}", host, "rest/api/2/search?jql=project=", jira_project);
 
     println!("Targetting URL : {}", fin);
     let client = reqwest::Client::new();
